@@ -72,9 +72,17 @@ TEST_CASE("SaveToFile", "[Account]") {
 }
 
 TEST_CASE("LoadFromFile", "[Account]") {
+    // Crea un account e aggiungi una transazione
     Account account("MyAccount", 0.0);
     account.loadFromFile("test_transactions.txt");
+
+    // Cerca la transazione caricata
     auto transactions = account.searchTransactions("Salary", Transaction::INCOME, 1000.0, 0);
     REQUIRE(transactions.size() == 1);
     REQUIRE(transactions[0].getName() == "Salary");
+
+    // Debug: stampa le transazioni caricate
+    for (const auto& transaction : transactions) {
+        std::cout << "Loaded Transaction: " << transaction.getName() << ", Amount: " << transaction.getAmount() << std::endl;
+    }
 }

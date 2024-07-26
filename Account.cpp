@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 Account::Account(const std::string& name, double initialBalance)
         : name(name), balance(initialBalance) {}
@@ -58,12 +59,18 @@ void Account::loadFromFile(const std::string& filename) {
         std::string name, typeStr;
         double amount;
         std::time_t date;
-        if (std::getline(iss, name, ',') && iss >> amount && std::getline(iss, typeStr, ',') && iss >> date) {
+        char delimiter;
+
+        if (std::getline(iss, name, ',') && iss >> amount >> delimiter && std::getline(iss, typeStr, ',') && iss >> date) {
             Transaction::Type type = Transaction::stringToType(typeStr);
             transactions.emplace_back(name, amount, type, date);
+        } else {
+            std::cerr << "Error reading line: " << line << std::endl;
         }
     }
 }
+
+
 
 void Account::updateBalance(const Transaction& transaction) {
     if (transaction.getType() == Transaction::INCOME) {
