@@ -72,17 +72,20 @@ TEST_CASE("SaveToFile", "[Account]") {
 }
 
 TEST_CASE("LoadFromFile", "[Account]") {
-    // Crea un account e aggiungi una transazione
-    Account account("MyAccount", 0.0);
-    account.loadFromFile("test_transactions.txt");
+    Account newAccount("MyAccount", 0.0);
+    try {
+        newAccount.loadFromFile("test_transactions.txt");
 
-    // Cerca la transazione caricata
-    auto transactions = account.searchTransactions("Salary", Transaction::INCOME, 1000.0, 0);
-    REQUIRE(transactions.size() == 1);
-    REQUIRE(transactions[0].getName() == "Salary");
+        // Cerca la transazione caricata
+        auto transactions = newAccount.searchTransactions("Salary", Transaction::INCOME, 1000.0, 0);
+        REQUIRE(transactions.size() == 1);
+        REQUIRE(transactions[0].getName() == "Salary");
 
-    // Debug: stampa le transazioni caricate
-    for (const auto& transaction : transactions) {
-        std::cout << "Loaded Transaction: " << transaction.getName() << ", Amount: " << transaction.getAmount() << std::endl;
+        // Debug: stampa le transazioni caricate
+        for (const auto& transaction : transactions) {
+            std::cout << "Loaded Transaction: " << transaction.getName() << ", Amount: " << transaction.getAmount() << std::endl;
+        }
+    } catch (const std::runtime_error& e) {
+        FAIL(e.what());
     }
 }

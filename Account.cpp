@@ -65,7 +65,7 @@ void Account::loadFromFile(const std::string& filename) {
             Transaction::Type type = Transaction::stringToType(typeStr);
             transactions.emplace_back(name, amount, type, date);
         } else {
-            std::cerr << "Error reading line: " << line << std::endl;
+            throw std::runtime_error("Error reading line: " + line);
         }
     }
 }
