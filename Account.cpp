@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <iostream>
+#include <stdexcept>
 
 Account::Account(const std::string& name, double initialBalance)
         : name(name), balance(initialBalance) {}
@@ -70,7 +70,9 @@ void Account::loadFromFile(const std::string& filename) {
     }
 }
 
-
+double Account::CalculateBalance() const {
+    return balance;
+}
 
 void Account::updateBalance(const Transaction& transaction) {
     if (transaction.getType() == Transaction::INCOME) {

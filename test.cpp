@@ -1,5 +1,4 @@
 #define CATCH_CONFIG_MAIN
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include "Account.h"
 #include "Transaction.h"
@@ -72,12 +71,22 @@ TEST_CASE("SaveToFile", "[Account]") {
 }
 
 TEST_CASE("LoadFromFile", "[Account]") {
+    // Crea un account e aggiungi una transazione
+    Account account("MyAccount", 0.0);
+    std::time_t now = std::time(nullptr);
+    Transaction t("Salary", 1000.0, Transaction::INCOME, now);
+    account.addTransaction(t);
+
+    // Salva le transazioni su file
+    account.saveToFile("test_transactions.txt");
+
+    // Crea un nuovo account e carica le transazioni dal file
     Account newAccount("MyAccount", 0.0);
     try {
         newAccount.loadFromFile("test_transactions.txt");
 
         // Cerca la transazione caricata
-        auto transactions = newAccount.searchTransactions("Salary", Transaction::INCOME, 1000.0, 0);
+        auto transactions = newAccount.searchTransactions("Salary", Transaction::INCOME, 1000.0, now);
         REQUIRE(transactions.size() == 1);
         REQUIRE(transactions[0].getName() == "Salary");
 
@@ -88,4 +97,20 @@ TEST_CASE("LoadFromFile", "[Account]") {
     } catch (const std::runtime_error& e) {
         FAIL(e.what());
     }
+}
+
+TEST_CASE("CalculateBalance", "[Account]") {
+    Account account("MyAccount", 0.0);
+    std::time_t now = std::time(nullptr);
+    Transaction t1("Salary", 1000.0, Transaction::INCOME, now);
+    Transaction t2("Rent", 500.0, Transaction::EXPENSE, now);
+    account.addTransaction(t1);
+    account.addTransaction(t2);
+    REQUIRE(account.CalculateBalance() == 500.0);
+}
+
+TEST_CASE("InvalidTransactionAmount", "[Transaction]") {
+    std::time_t now = std::time(nullptr);
+    REQUIRE_THROWS_AS(Transaction("Invalid", -100.0, Transaction::EXPENSE, now), std::invalid_argument);
+    REQUIRE_THROWS_AS(Transaction("Invalid", 0.0, Transaction::EXPENSE, now), std::invalid_argument);
 }

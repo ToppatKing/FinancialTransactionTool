@@ -15,6 +15,7 @@ public:
     std::vector<Transaction> searchTransactions(const std::string& name, Transaction::Type type, double amount, const std::time_t& date);
     void saveToFile(const std::string& filename);
     void loadFromFile(const std::string& filename);
+    double CalculateBalance() const;
 
 private:
     std::string name;
