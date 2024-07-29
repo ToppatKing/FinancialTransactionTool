@@ -33,6 +33,9 @@ TEST_CASE("DeleteTransaction", "[Account]") {
     auto transactions = account.searchTransactions("Rent", Transaction::EXPENSE, 500.0, now);
     REQUIRE(transactions.size() == 0);
     REQUIRE(account.CalculateBalance() == 1000.0);
+
+    // Test per transazione non trovata
+    REQUIRE_FALSE(account.deleteTransaction("NonExistent"));
 }
 
 TEST_CASE("ModifyTransaction", "[Account]") {
@@ -46,6 +49,10 @@ TEST_CASE("ModifyTransaction", "[Account]") {
     REQUIRE(transactions.size() == 1);
     REQUIRE(transactions[0].getAmount() == 1200.0);
     REQUIRE(account.CalculateBalance() == 1200.0);
+
+    // Test per transazione non trovata
+    Transaction nonExistentTransaction("NonExistent", 500.0, Transaction::EXPENSE, now);
+    REQUIRE_FALSE(account.modifyTransaction("NonExistent", nonExistentTransaction));
 }
 
 TEST_CASE("SearchTransactions", "[Account]") {
