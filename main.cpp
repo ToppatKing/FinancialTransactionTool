@@ -1,6 +1,14 @@
 #include <iostream>
+#include <fstream>
 #include "Account.h"
 #include "Transaction.h"
+
+void logError(const std::string& message) {
+    std::ofstream logFile("error_log.txt", std::ios_base::app);
+    if (logFile.is_open()) {
+        logFile << message << std::endl;
+    }
+}
 
 int main() {
     try {
@@ -21,7 +29,7 @@ int main() {
 
         std::cout << "Current Balance: " << newAccount.CalculateBalance() << std::endl;
     } catch (const std::exception& e) {
-        throw std::runtime_error(std::string("Error: ") + e.what());
+        logError(std::string("Error: ") + e.what());
     }
 
     return 0;
