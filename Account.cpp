@@ -9,25 +9,30 @@ Account::Account(const std::string& name, double initialBalance)
 
 void Account::addTransaction(const Transaction& transaction) {
     transactions.push_back(transaction);
-    updateBalance(transaction);
+    updateBalance(transaction, true);
 }
 
-void Account::deleteTransaction(const std::string& transactionName) {
+bool Account::deleteTransaction(const std::string& transactionName) {
     for (auto it = transactions.begin(); it != transactions.end(); ++it) {
         if (it->getName() == transactionName) {
+            updateBalance(*it, false);
             transactions.erase(it);
-            break;
+            return true;
         }
     }
+    return false;
 }
 
-void Account::modifyTransaction(const std::string& transactionName, const Transaction& newTransaction) {
+bool Account::modifyTransaction(const std::string& transactionName, const Transaction& newTransaction) {
     for (auto& transaction : transactions) {
         if (transaction.getName() == transactionName) {
+            updateBalance(transaction, false);
             transaction = newTransaction;
-            break;
+            updateBalance(newTransaction, true);
+            return true;
         }
     }
+    return false;
 }
 
 std::vector<Transaction> Account::searchTransactions(const std::string& name, Transaction::Type type, double amount, const std::time_t& date) {
@@ -74,10 +79,18 @@ double Account::CalculateBalance() const {
     return balance;
 }
 
-void Account::updateBalance(const Transaction& transaction) {
-    if (transaction.getType() == Transaction::INCOME) {
-        balance += transaction.getAmount();
-    } else if (transaction.getType() == Transaction::EXPENSE) {
-        balance -= transaction.getAmount();
+void Account::updateBalance(const Transaction& transaction, bool isAdding) {
+    if (isAdding) {
+        if (transaction.getType() == Transaction::INCOME) {
+            balance += transaction.getAmount();
+        } else if (transaction.getType() == Transaction::EXPENSE) {
+            balance -= transaction.getAmount();
+        }
+    } else {
+        if (transaction.getType() == Transaction::INCOME) {
+            balance -= transaction.getAmount();
+        } else if (transaction.getType() == Transaction::EXPENSE) {
+            balance += transaction.getAmount();
+        }
     }
 }

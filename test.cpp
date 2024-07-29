@@ -29,9 +29,10 @@ TEST_CASE("DeleteTransaction", "[Account]") {
     Transaction t2("Rent", 500.0, Transaction::EXPENSE, now);
     account.addTransaction(t1);
     account.addTransaction(t2);
-    account.deleteTransaction("Rent");
+    REQUIRE(account.deleteTransaction("Rent"));
     auto transactions = account.searchTransactions("Rent", Transaction::EXPENSE, 500.0, now);
     REQUIRE(transactions.size() == 0);
+    REQUIRE(account.CalculateBalance() == 1000.0);
 }
 
 TEST_CASE("ModifyTransaction", "[Account]") {
@@ -40,10 +41,11 @@ TEST_CASE("ModifyTransaction", "[Account]") {
     Transaction t("Salary", 1000.0, Transaction::INCOME, now);
     account.addTransaction(t);
     Transaction newTransaction("Salary", 1200.0, Transaction::INCOME, now);
-    account.modifyTransaction("Salary", newTransaction);
+    REQUIRE(account.modifyTransaction("Salary", newTransaction));
     auto transactions = account.searchTransactions("Salary", Transaction::INCOME, 1200.0, now);
     REQUIRE(transactions.size() == 1);
     REQUIRE(transactions[0].getAmount() == 1200.0);
+    REQUIRE(account.CalculateBalance() == 1200.0);
 }
 
 TEST_CASE("SearchTransactions", "[Account]") {
